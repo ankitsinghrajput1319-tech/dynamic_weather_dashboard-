@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prestige Weather - Executive Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+    <!-- Luxury Background Pattern -->
+    <div class="luxury-pattern"></div>
+    <div class="ambient-glow"></div>
+
+    <div class="container">
+        <!-- Header Section -->
+        <header class="header">
+            <!-- <div class="crown-icon">♔</div> -->
+            <h1>Weather Dashboard</h1>
+            <p class="subtitle">Executive Climate Intelligence</p>
+            <div class="header-divider"></div>
+        </header>
+
+        <!-- Search Section -->
+        <section class="search-section">
+            <div class="search-container">
+                <div class="search-input-wrapper">
+                    <input type="text" class="search-input" placeholder="Enter distinguished location..." id="cityInput">
+                    <div class="search-icon">🔍</div>
+                </div>
+                <button class="luxury-btn primary" onclick="searchWeather()">
+                    <span>Search</span>
+                    <div class="btn-shine"></div>
+                </button>
+                <button class="luxury-btn secondary" onclick="getCurrentLocation()">
+                    <span>📍 Current Position</span>
+                    <div class="btn-shine"></div>
+                </button>
+            </div>
+        </section>
+
+        <!-- Status Messages -->
+        <div id="loading" class="status-message loading hidden">
+            <div class="loading-spinner"></div>
+            <p>Acquiring meteorological intelligence...</p>
+        </div>
+        <div id="error" class="status-message error hidden"></div>
+
+        <!-- Main Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Primary Weather Card -->
+            <div id="weatherMain" class="weather-card primary-card hidden">
+                <div class="card-header">
+                    <div class="location-info">
+                        <h2 id="locationName" class="location-name"></h2>
+                        <p id="currentDate" class="current-date"></p>
+                        <div class="coordinates" id="coordinates"></div>
+                    </div>
+                    <div class="premium-badge">PREMIUM</div>
+                </div>
+
+                <div class="weather-hero">
+                    <div class="temperature-display">
+                        <span id="temperature" class="temperature"></span>
+                        <div class="temp-unit">°C</div>
+                    </div>
+                    <div class="weather-visual">
+                        <div id="weatherIcon" class="weather-icon-large"></div>
+                        <p id="weatherDescription" class="weather-description"></p>
+                    </div>
+                </div>
+
+                <div class="premium-metrics">
+                    <div class="metric-item">
+                        <div class="metric-icon">🌡️</div>
+                        <div class="metric-content">
+                            <span class="metric-label">Perceived</span>
+                            <span id="feelsLike" class="metric-value"></span>
+                        </div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-icon">💧</div>
+                        <div class="metric-content">
+                            <span class="metric-label">Humidity</span>
+                            <span id="humidity" class="metric-value"></span>
+                        </div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-icon">🌪️</div>
+                        <div class="metric-content">
+                            <span class="metric-label">Wind Velocity</span>
+                            <span id="windSpeed" class="metric-value"></span>
+                        </div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-icon">📊</div>
+                        <div class="metric-content">
+                            <span class="metric-label">Pressure</span>
+                            <span id="pressure" class="metric-value"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Map Card -->
+            <div id="mapCard" class="weather-card map-card hidden">
+                <div class="card-header">
+                    <h3>Geographic Intelligence</h3>
+                    <div class="map-controls">
+                        <button class="map-btn" onclick="toggleMapLayer('satellite')">Satellite</button>
+                        <button class="map-btn active" onclick="toggleMapLayer('streets')">Streets</button>
+                    </div>
+                </div>
+                <div id="weatherMap" class="weather-map"></div>
+                <div class="map-info">
+                    <div class="map-legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #ff4444;"></div>
+                            <span>High Pressure</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #4444ff;"></div>
+                            <span>Low Pressure</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Metrics Card -->
+            <div id="metricsCard" class="weather-card metrics-card hidden">
+                <div class="card-header">
+                    <h3>Advanced Analytics</h3>
+                    <div class="refresh-btn" onclick="refreshWeather()">⟳</div>
+                </div>
+                <div class="advanced-metrics">
+                    <div class="metric-row">
+                        <div class="metric-box">
+                            <div class="metric-title">Visibility</div>
+                            <div id="visibility" class="metric-number"></div>
+                        </div>
+                        <div class="metric-box">
+                            <div class="metric-title">UV Index</div>
+                            <div id="uvIndex" class="metric-number">N/A</div>
+                        </div>
+                    </div>
+                    <div class="metric-row">
+                        <div class="metric-box">
+                            <div class="metric-title">Sunrise</div>
+                            <div id="sunrise" class="metric-number"></div>
+                        </div>
+                        <div class="metric-box">
+                            <div class="metric-title">Sunset</div>
+                            <div id="sunset" class="metric-number"></div>
+                        </div>
+                    </div>
+                    <div class="comfort-index">
+                        <div class="comfort-title">Comfort Index</div>
+                        <div class="comfort-bar">
+                            <div id="comfortLevel" class="comfort-fill"></div>
+                        </div>
+                        <div id="comfortText" class="comfort-text">Calculating...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Forecast Section -->
+        <section id="forecastSection" class="forecast-section hidden">
+            <div class="section-header">
+                <h2>7-Day Executive Forecast</h2>
+                <p>Curated meteorological projections for strategic planning</p>
+            </div>
+            <div class="forecast-container">
+                <div id="forecastGrid" class="forecast-grid"></div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <p>made with passion by Ankit Singh</p>
+                <div class="footer-links">
+                    <a href="https://www.instagram.com/a_nkit_singh05?igsh=MWNxcjE1ZWtwdHlsaA=="> Instagram</a>
+                    <span> | </span>
+                    <a href="https://www.linkedin.com/in/ankit-singh-rajput-20263631a?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"> LinkedIn </a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
